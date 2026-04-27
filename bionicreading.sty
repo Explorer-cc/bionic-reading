@@ -1,0 +1,297 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesExplPackage
+  {bionicreading}
+  {2026-04-27}
+  {0.1.0}
+  {Bionic-reading style highlighting for ASCII western text}
+
+\RequirePackage{expl3}
+\RequirePackage{xparse}
+
+\ExplSyntaxOn
+
+\msg_new:nnn { bionicreading } { invalid-fixation-point }
+  {
+    Invalid~fixation-point~'#1'.~
+    The~value~must~be~an~integer~from~1~to~5.
+  }
+
+\bool_new:N \l__bionicreading_enabled_bool
+\bool_new:N \l__bionicreading_math_bool
+\bool_new:N \l__bionicreading_word_has_letter_bool
+\int_new:N \l__bionicreading_fixation_point_int
+\int_new:N \l__bionicreading_word_length_int
+\int_new:N \l__bionicreading_bold_length_int
+\int_new:N \l__bionicreading_boundary_index_int
+\int_new:N \l__bionicreading_normal_font_int
+\int_new:N \l__bionicreading_bold_font_int
+\tl_new:N \l__bionicreading_output_tl
+\tl_new:N \l__bionicreading_word_tl
+\tl_new:N \l__bionicreading_bold_part_tl
+\tl_new:N \l__bionicreading_rest_part_tl
+\clist_new:N \l__bionicreading_boundary_clist
+
+\clist_const:Nn \c__bionicreading_boundary_i_clist
+  { 0, 4, 12, 17, 24, 29, 35, 42, 48 }
+\clist_const:Nn \c__bionicreading_boundary_ii_clist
+  { 1, 2, 7, 10, 13, 14, 19, 22, 25, 28, 31, 34, 37, 40, 43, 46, 49 }
+\clist_const:Nn \c__bionicreading_boundary_iii_clist
+  {
+    1, 2, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25,
+    27, 29, 31, 33, 35, 37, 39, 41, 43, 45, 47, 49
+  }
+\clist_const:Nn \c__bionicreading_boundary_iv_clist
+  {
+    0, 2, 4, 5, 6, 8, 9, 11, 14, 15, 17, 18, 20, 0,
+    21, 23, 24, 26, 27, 29, 30, 32, 33, 35, 36, 38,
+    39, 41, 42, 44, 45, 47, 48
+  }
+\clist_const:Nn \c__bionicreading_boundary_v_clist
+  {
+    0, 2, 3, 5, 6, 7, 8, 10, 11, 12, 14, 15, 17, 19,
+    20, 21, 23, 24, 25, 26, 28, 29, 30, 32, 33, 34,
+    35, 37, 38, 39, 41, 42, 43, 44, 46, 47, 48
+  }
+
+\cs_new_protected:Npn \__bionicreading_bold:n #1
+  { \textbf {#1} }
+
+\keys_define:nn { bionicreading }
+  {
+    enabled .bool_set:N = \l__bionicreading_enabled_bool,
+    enabled .initial:n = true,
+    fixation-point .code:n =
+      {
+        \int_compare:nNnTF {#1} < { 1 }
+          { \msg_error:nnn { bionicreading } { invalid-fixation-point } {#1} }
+          {
+            \int_compare:nNnTF {#1} > { 5 }
+              { \msg_error:nnn { bionicreading } { invalid-fixation-point } {#1} }
+              { \int_set:Nn \l__bionicreading_fixation_point_int {#1} }
+          }
+      },
+    fixation-point .initial:n = 1,
+    bold-command .code:n =
+      { \cs_set_protected:Npn \__bionicreading_bold:n ##1 { #1 {##1} } },
+    bold-command .initial:n = \textbf,
+  }
+
+\NewDocumentCommand \bionicsetup { m }
+  {
+    \keys_set:nn { bionicreading } {#1}
+    \__bionicreading_lua_set_fixation:
+  }
+
+\NewDocumentCommand \bionic { O{} +m }
+  {
+    \group_begin:
+      \keys_set:nn { bionicreading } {#1}
+      \bool_if:NTF \l__bionicreading_enabled_bool
+        { \__bionicreading_process:n {#2} }
+        {#2}
+    \group_end:
+  }
+
+\sys_if_engine_luatex:TF
+  {
+    \directlua
+      {
+        bionicreading = dofile(kpse.find_file("bionicreading.lua"))
+        bionicreading.register_callbacks()
+      }
+
+    \cs_new_protected:Npn \__bionicreading_lua_set_fixation:
+      {
+        \directlua
+          {
+            bionicreading.set_fixation_point(
+              \int_use:N \l__bionicreading_fixation_point_int
+            )
+          }
+      }
+
+    \cs_new_protected:Npn \__bionicreading_lua_register_font_pair:
+      {
+        \group_begin:
+          \int_set:Nn \l__bionicreading_normal_font_int { \fontid \font }
+          \bfseries
+          \int_set:Nn \l__bionicreading_bold_font_int { \fontid \font }
+          \directlua
+            {
+              bionicreading.register_font_pair(
+                \int_use:N \l__bionicreading_normal_font_int,
+                \int_use:N \l__bionicreading_bold_font_int
+              )
+            }
+        \group_end:
+      }
+
+    \NewDocumentCommand \bionicstart { O{} }
+      {
+        \group_begin:
+          \keys_set:nn { bionicreading } {#1}
+          \__bionicreading_lua_register_font_pair:
+          \directlua
+            {
+              bionicreading.start(
+                \int_use:N \l__bionicreading_fixation_point_int,
+                \bool_if:NTF \l__bionicreading_enabled_bool { true } { false }
+              )
+            }
+      }
+
+    \NewDocumentCommand \bionicstop { }
+      {
+          \directlua { bionicreading.stop() }
+        \group_end:
+      }
+
+    \NewDocumentEnvironment { bionicpar } { O{} }
+      { \bionicstart [#1] }
+      { \par \bionicstop }
+  }
+  {
+    \cs_new_protected:Npn \__bionicreading_lua_set_fixation: { }
+
+    \NewDocumentCommand \bionicstart { O{} }
+      { \group_begin: \keys_set:nn { bionicreading } {#1} }
+
+    \NewDocumentCommand \bionicstop { }
+      { \group_end: }
+
+    \NewDocumentEnvironment { bionicpar } { O{} +b }
+      { \bionic [#1] {#2} }
+      { }
+  }
+
+\cs_new_protected:Npn \__bionicreading_process:n #1
+  {
+    \tl_clear:N \l__bionicreading_output_tl
+    \__bionicreading_clear_word:
+    \bool_set_false:N \l__bionicreading_math_bool
+    \str_map_inline:nn {#1} { \__bionicreading_scan_char:n {##1} }
+    \__bionicreading_flush_word:
+    \tl_use:N \l__bionicreading_output_tl
+  }
+
+\cs_new_protected:Npn \__bionicreading_scan_char:n #1
+  {
+    \str_if_eq:nnTF {#1} { $ }
+      {
+        \__bionicreading_flush_word:
+        \bool_set_inverse:N \l__bionicreading_math_bool
+        \tl_put_right:Nn \l__bionicreading_output_tl { $ }
+      }
+      {
+        \bool_if:NTF \l__bionicreading_math_bool
+          { \__bionicreading_put_char:n {#1} }
+          { \__bionicreading_scan_text_char:n {#1} }
+      }
+  }
+
+\cs_new_protected:Npn \__bionicreading_scan_text_char:n #1
+  {
+    \str_if_in:nnTF
+      { ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 }
+      {#1}
+      {
+        \tl_put_right:Nn \l__bionicreading_word_tl {#1}
+        \int_incr:N \l__bionicreading_word_length_int
+        \str_if_in:nnT
+          { ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz }
+          {#1}
+          { \bool_set_true:N \l__bionicreading_word_has_letter_bool }
+      }
+      {
+        \__bionicreading_flush_word:
+        \__bionicreading_put_char:n {#1}
+      }
+  }
+
+\cs_new_protected:Npn \__bionicreading_put_char:n #1
+  {
+    \tl_if_blank:nTF {#1}
+      { \tl_put_right:Nn \l__bionicreading_output_tl { ~ } }
+      { \tl_put_right:Nn \l__bionicreading_output_tl {#1} }
+  }
+
+\cs_new_protected:Npn \__bionicreading_clear_word:
+  {
+    \tl_clear:N \l__bionicreading_word_tl
+    \int_zero:N \l__bionicreading_word_length_int
+    \bool_set_false:N \l__bionicreading_word_has_letter_bool
+  }
+
+\cs_new_protected:Npn \__bionicreading_flush_word:
+  {
+    \tl_if_empty:NF \l__bionicreading_word_tl
+      {
+        \bool_if:NTF \l__bionicreading_word_has_letter_bool
+          { \__bionicreading_flush_convertible_word: }
+          { \tl_put_right:NV \l__bionicreading_output_tl \l__bionicreading_word_tl }
+        \__bionicreading_clear_word:
+      }
+  }
+
+\cs_new_protected:Npn \__bionicreading_flush_convertible_word:
+  {
+    \__bionicreading_get_fixation_length:nN
+      { \l__bionicreading_word_length_int }
+      \l__bionicreading_bold_length_int
+    \int_compare:nNnTF { \l__bionicreading_bold_length_int } > { 0 }
+      {
+        \tl_set:Nx \l__bionicreading_bold_part_tl
+          {
+            \tl_range:Nnn \l__bionicreading_word_tl
+              { 1 }
+              { \l__bionicreading_bold_length_int }
+          }
+        \tl_set:Nx \l__bionicreading_rest_part_tl
+          {
+            \tl_range:Nnn \l__bionicreading_word_tl
+              { \int_eval:n { \l__bionicreading_bold_length_int + 1 } }
+              { -1 }
+          }
+        \tl_put_right:Ne \l__bionicreading_output_tl
+          {
+            \exp_not:N \__bionicreading_bold:n
+              { \exp_not:V \l__bionicreading_bold_part_tl }
+            \exp_not:V \l__bionicreading_rest_part_tl
+          }
+      }
+      { \tl_put_right:NV \l__bionicreading_output_tl \l__bionicreading_word_tl }
+  }
+
+\cs_new_protected:Npn \__bionicreading_get_fixation_length:nN #1#2
+  {
+    \__bionicreading_select_boundary:n { \l__bionicreading_fixation_point_int }
+    \int_zero:N \l__bionicreading_boundary_index_int
+    \int_set:Nn #2 { -1 }
+    \clist_map_inline:Nn \l__bionicreading_boundary_clist
+      {
+        \int_compare:nT { #1 <= ##1 }
+          {
+            \int_set:Nn #2 { #1 - \l__bionicreading_boundary_index_int }
+            \clist_map_break:
+          }
+        \int_incr:N \l__bionicreading_boundary_index_int
+      }
+    \int_compare:nNnT {#2} < { 0 }
+      { \int_set:Nn #2 { #1 - \clist_count:N \l__bionicreading_boundary_clist } }
+    \int_set:Nn #2 { \int_max:nn {#2} { 0 } }
+  }
+
+\cs_new_protected:Npn \__bionicreading_select_boundary:n #1
+  {
+    \int_case:nnF {#1}
+      {
+        { 1 } { \clist_set_eq:NN \l__bionicreading_boundary_clist \c__bionicreading_boundary_i_clist }
+        { 2 } { \clist_set_eq:NN \l__bionicreading_boundary_clist \c__bionicreading_boundary_ii_clist }
+        { 3 } { \clist_set_eq:NN \l__bionicreading_boundary_clist \c__bionicreading_boundary_iii_clist }
+        { 4 } { \clist_set_eq:NN \l__bionicreading_boundary_clist \c__bionicreading_boundary_iv_clist }
+        { 5 } { \clist_set_eq:NN \l__bionicreading_boundary_clist \c__bionicreading_boundary_v_clist }
+      }
+      { \clist_set_eq:NN \l__bionicreading_boundary_clist \c__bionicreading_boundary_i_clist }
+  }
+
+\ExplSyntaxOff

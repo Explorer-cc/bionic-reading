@@ -1,0 +1,46 @@
+\documentclass[fontset=fandol]{ctexart}
+\usepackage[osf,tt=false]{libertine}
+\usepackage{lipsum}
+\usepackage{bionicreading}
+
+\begin{document}
+
+\section*{Command}
+
+\bionic{Confucius said: Madam, I'm Adam.}
+
+\bionic[fixation-point=5]{text-vide and internationalization}
+
+\bionic{abc123 123abc 123456 text-vide}
+
+\section*{CJK and Math}
+
+\bionic{这是 a simple test 文本。Math $internationalization + x = 1$ stays unchanged.}
+
+\section*{Environment}
+
+\begin{bionicpar}[fixation-point=1]
+Bionic Reading is a new method facilitating the reading process by guiding the
+eyes through text with artificial fixation points.
+\end{bionicpar}
+
+\section*{Paragraph}
+
+\begin{bionicpar}[fixation-point=3]
+\lipsum[1]
+\end{bionicpar}
+
+\begin{bionicpar}[fixation-point=5]
+\lipsum[2]
+\end{bionicpar}
+
+\section*{Global Setup}
+
+\bionicsetup{fixation-point=5}
+\bionic{text-vide bionic reading}
+
+\bionicsetup{enabled=false}
+\bionic{This sentence is not transformed.}
+
+
+\end{document}
