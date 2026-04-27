@@ -1,8 +1,8 @@
-# bionicreading
+# bionic-reading
 
 [简体中文说明](README.zh-CN.md)
 
-`bionicreading` is a LuaLaTeX package that applies bionic-reading-style highlighting to western ASCII words. It bolds the leading part of each matched word while leaving CJK text and math content unchanged.
+`bionic-reading` is a LuaLaTeX package that applies bionic-reading-style highlighting to western ASCII words. It bolds the leading part of each matched word while leaving CJK text and math content unchanged.
 
 ## Features
 
@@ -23,8 +23,8 @@
 
 This repository already includes the package source:
 
-- `bionicreading.sty`
-- `bionicreading.lua`
+- `bionic-reading.sty`
+- `bionic-reading.lua`
 
 For local testing, keep these files beside your `.tex` document, or install them into your local TeX tree.
 
@@ -32,7 +32,7 @@ For local testing, keep these files beside your `.tex` document, or install them
 
 ```tex
 \documentclass{article}
-\usepackage{bionicreading}
+\usepackage{bionic-reading}
 
 \begin{document}
 
@@ -67,9 +67,9 @@ In general, larger `fixation-point` values produce shorter highlighted prefixes.
 ## Repository Files
 
 - `example.tex`: minimal usage example.
-- `bionicreading.dtx`: documented source.
-- `bionicreading-en.tex`: English package documentation driver.
-- `bionicreading-cn.tex`: Chinese package documentation driver.
+- `bionic-reading.dtx`: documented source.
+- `bionic-reading-en.tex`: English package documentation driver.
+- `bionic-reading-cn.tex`: Chinese package documentation driver.
 
 ## License
 

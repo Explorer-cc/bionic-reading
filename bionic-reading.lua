@@ -130,7 +130,7 @@ function M.register_callbacks()
     return
   end
   if luatexbase and luatexbase.add_to_callback then
-    luatexbase.add_to_callback("pre_linebreak_filter", M.process_list, "bionicreading")
+    luatexbase.add_to_callback("pre_linebreak_filter", M.process_list, "bionic-reading")
   else
     callback.register("pre_linebreak_filter", M.process_list)
   end

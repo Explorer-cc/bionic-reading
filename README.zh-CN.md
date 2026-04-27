@@ -1,8 +1,8 @@
-# bionicreading
+# bionic-reading
 
 [English README](README.md)
 
-`bionicreading` 是一个基于 LuaLaTeX 的宏包，用来为西文 ASCII 单词添加 bionic reading 风格的前导加粗效果。它只处理匹配到的西文单词，不会改写 CJK 文本和数学公式内容。
+`bionic-reading` 是一个基于 LuaLaTeX 的宏包，用来为西文 ASCII 单词添加 bionic reading 风格的前导加粗效果。它只处理匹配到的西文单词，不会改写 CJK 文本和数学公式内容。
 
 ## 功能
 
@@ -23,8 +23,8 @@
 
 仓库中已经包含宏包所需文件：
 
-- `bionicreading.sty`
-- `bionicreading.lua`
+- `bionic-reading.sty`
+- `bionic-reading.lua`
 
 本地测试时，可以把这些文件放在你的 `.tex` 文档同目录下，或安装到本地 TeX 树中。
 
@@ -32,7 +32,7 @@
 
 ```tex
 \documentclass{article}
-\usepackage{bionicreading}
+\usepackage{bionic-reading}
 
 \begin{document}
 
@@ -67,9 +67,9 @@ This paragraph is processed with bionic-reading-style emphasis.
 ## 仓库文件
 
 - `example.tex`：最小使用示例。
-- `bionicreading.dtx`：带文档的源码。
-- `bionicreading-en.tex`：英文文档驱动文件。
-- `bionicreading-cn.tex`：中文文档驱动文件。
+- `bionic-reading.dtx`：带文档的源码。
+- `bionic-reading-en.tex`：英文文档驱动文件。
+- `bionic-reading-cn.tex`：中文文档驱动文件。
 
 ## 许可证
 

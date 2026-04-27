@@ -54,7 +54,7 @@
   \hypersetup
 }
 \begin{document}
-  \DocInput{bionicreading.dtx}
+  \DocInput{bionic-reading.dtx}
 \end{document}
 %</driver-en>
 %<*driver-cn>
@@ -111,25 +111,25 @@
   \hypersetup
 }
 \begin{document}
-  \DocInput{bionicreading.dtx}
+  \DocInput{bionic-reading.dtx}
 \end{document}
 %</driver-cn>
 % \fi
 %
 % \newcommand{\BionicDocTitle}
-%   {\BionicDocText{The \pkg{bionicreading} package}{\pkg{bionicreading} 宏包}}
+%   {\BionicDocText{The \pkg{bionic-reading} package}{\pkg{bionic-reading} 宏包}}
 % \newcommand{\BionicDocAbstract}
 %   {
 %     \BionicDocText
 %       {%
-%         \pkg{bionicreading} highlights the leading part of western ASCII words.
+%         \pkg{bionic-reading} highlights the leading part of western ASCII words.
 %         It provides a small \hologo{LaTeX}3 interface backed by \hologo{LuaTeX} node processing.
 %         Both inline commands and paragraph environments mark their contents with a
 %         \hologo{LuaTeX} attribute; the Lua backend later converts marked western glyphs during
 %         paragraph processing.  CJK glyphs and mathematical material are not converted.
 %       }
 %       {%
-%         \pkg{bionicreading} 用于强调西文 ASCII 单词的前导部分。
+%         \pkg{bionic-reading} 用于强调西文 ASCII 单词的前导部分。
 %         它提供了一组简洁的 \hologo{LaTeX}3 接口，并由 \hologo{LuaTeX} 的节点处理逻辑完成实际转换。
 %         行内命令和段落环境都会先给内容打上 \hologo{LuaTeX} attribute 标记，
 %         再由 Lua 后端在分段过程中转换对应的西文字形。
@@ -368,7 +368,7 @@
 % \section{\BionicDocExamplesTitle}
 %
 % \begin{verbatim}
-% \usepackage{bionicreading}
+% \usepackage{bionic-reading}
 %
 % \bionic{Confucius said: Madam, I'm Adam.}
 % \bionic[fixation-point=5]{text-vide and internationalization}
@@ -396,7 +396,7 @@
 %<*package>
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesExplPackage
-  {bionicreading}
+  {bionic-reading}
   {2026-04-27}
   {0.1.0}
   {Bionic-reading style highlighting for ASCII western text}
@@ -406,16 +406,16 @@
 
 \ExplSyntaxOn
 
-\msg_new:nnn { bionicreading } { invalid-fixation-point }
+\msg_new:nnn { bionic-reading } { invalid-fixation-point }
   {
     Invalid~fixation-point~'#1'.~
     The~value~must~be~an~integer~from~1~to~5.
   }
-\msg_new:nnn { bionicreading } { luatex-required }
-  { The~bionicreading~package~requires~LuaLaTeX. }
+\msg_new:nnn { bionic-reading } { luatex-required }
+  { The~bionic-reading~package~requires~LuaLaTeX. }
 
 \sys_if_engine_luatex:F
-  { \msg_fatal:nn { bionicreading } { luatex-required } }
+  { \msg_fatal:nn { bionic-reading } { luatex-required } }
 
 \RequirePackage{luatexbase}
 
@@ -425,17 +425,17 @@
 \int_new:N \l__bionicreading_bold_font_int
 \newluatexattribute \g__bionicreading_attribute
 
-\keys_define:nn { bionicreading }
+\keys_define:nn { bionic-reading }
   {
     enabled .bool_set:N = \l__bionicreading_enabled_bool,
     enabled .initial:n = true,
     fixation-point .code:n =
       {
         \int_compare:nNnTF {#1} < { 1 }
-          { \msg_error:nnn { bionicreading } { invalid-fixation-point } {#1} }
+          { \msg_error:nnn { bionic-reading } { invalid-fixation-point } {#1} }
           {
             \int_compare:nNnTF {#1} > { 5 }
-              { \msg_error:nnn { bionicreading } { invalid-fixation-point } {#1} }
+              { \msg_error:nnn { bionic-reading } { invalid-fixation-point } {#1} }
               { \int_set:Nn \l__bionicreading_fixation_point_int {#1} }
           }
       },
@@ -443,11 +443,11 @@
   }
 
 \NewDocumentCommand \bionicsetup { m }
-  { \keys_set:nn { bionicreading } {#1} }
+  { \keys_set:nn { bionic-reading } {#1} }
 
 \cs_new_protected:Npn \__bionicreading_begin:n #1
   {
-    \keys_set:nn { bionicreading } {#1}
+    \keys_set:nn { bionic-reading } {#1}
     \__bionicreading_lua_register_font_pair:
     \__bionicreading_set_attribute:
   }
@@ -462,7 +462,7 @@
 
 \directlua
   {
-    bionicreading = dofile(kpse.find_file("bionicreading.lua"))
+    bionicreading = dofile(kpse.find_file("bionic-reading.lua"))
     bionicreading.set_attribute(
       luatexbase.attributes["g__bionicreading_attribute"]
     )
@@ -648,7 +648,7 @@ function M.register_callbacks()
     return
   end
   if luatexbase and luatexbase.add_to_callback then
-    luatexbase.add_to_callback("pre_linebreak_filter", M.process_list, "bionicreading")
+    luatexbase.add_to_callback("pre_linebreak_filter", M.process_list, "bionic-reading")
   else
     callback.register("pre_linebreak_filter", M.process_list)
   end

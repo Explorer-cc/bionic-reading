@@ -1,4 +1,4 @@
-module = "bionicreading"
+module = "bionic-reading"
 
 sourcefiledir = "."
 unpackdir = "build/unpacked"
@@ -6,10 +6,10 @@ unpackdir = "build/unpacked"
 checkengines = {"luatex"}
 typesetexe = "lualatex"
 
-unpackfiles = {"bionicreading.ins"}
-sourcefiles = {"bionicreading.dtx", "bionicreading.ins"}
+unpackfiles = {"bionic-reading.ins"}
+sourcefiles = {"bionic-reading.dtx", "bionic-reading.ins"}
 installfiles = {"*.sty", "*.lua"}
-typesetfiles = {"bionicreading-en.tex", "bionicreading-cn.tex"}
+typesetfiles = {"bionic-reading-en.tex", "bionic-reading-cn.tex"}
 docfiles = {
   "README.md",
   "README.zh-CN.md",

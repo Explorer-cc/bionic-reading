@@ -1,12 +1,12 @@
 \documentclass{l3doc}
-\usepackage{fontspec}
+\usepackage[fontset=fandol]{ctex}
+\usepackage[osf,tt=false]{libertine}
 \usepackage{xcolor}
 \usepackage{hologo}
 \usepackage{booktabs}
 \usepackage{setspace}
 \setstretch{1.25}
-\setmainfont{TeX Gyre Pagella}
-\newcommand{\BionicDocText}[2]{#1}
+\newcommand{\BionicDocText}[2]{#2}
 \EnableCrossrefs
 \RecordChanges
 \hypersetup{
@@ -52,5 +52,5 @@
   \hypersetup
 }
 \begin{document}
-  \DocInput{bionicreading.dtx}
+  \DocInput{bionic-reading.dtx}
 \end{document}
