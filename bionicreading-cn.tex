@@ -1,0 +1,55 @@
+\documentclass{l3doc}
+\usepackage[fontset=fandol]{ctex}
+\usepackage{xcolor}
+\usepackage{hologo}
+\usepackage{booktabs}
+\usepackage{setspace}
+\setstretch{1.25}
+\newcommand{\BionicDocText}[2]{#2}
+\EnableCrossrefs
+\RecordChanges
+\hypersetup{
+  colorlinks = true,
+  linkcolor = magenta,
+  urlcolor = magenta,
+  citecolor = magenta,
+}
+\DoNotIndex{
+  \NeedsTeXFormat,
+  \ProvidesExplPackage,
+  \RequirePackage,
+  \ExplSyntaxOn,
+  \ExplSyntaxOff,
+  \NewDocumentCommand,
+  \NewDocumentEnvironment,
+  \bfseries,
+  \directlua,
+  \font,
+  \fontid,
+  \par,
+  \setluatexattribute,
+  \unsetluatexattribute,
+  \newluatexattribute,
+  \bool_if:NTF,
+  \bool_new:N,
+  \cs_new_protected:Npn,
+  \group_begin:,
+  \group_end:,
+  \int_compare:nNnTF,
+  \int_new:N,
+  \int_set:Nn,
+  \int_use:N,
+  \keys_define:nn,
+  \keys_set:nn,
+  \msg_error:nnn,
+  \msg_fatal:nn,
+  \msg_new:nnn,
+  \sys_if_engine_luatex:F,
+  \BionicDocText,
+  \hologo,
+  \href,
+  \hypersetup
+}
+\begin{document}
+  \DocInput{bionicreading.dtx}
+\end{document}

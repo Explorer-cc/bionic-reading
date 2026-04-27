@@ -1,13 +1,22 @@
 % \iffalse
-%<*driver>
+%<*driver-en>
 \documentclass{l3doc}
 \usepackage{fontspec}
+\usepackage{xcolor}
+\usepackage{hologo}
 \usepackage{booktabs}
 \usepackage{setspace}
 \setstretch{1.25}
 \setmainfont{TeX Gyre Pagella}
+\newcommand{\BionicDocText}[2]{#1}
 \EnableCrossrefs
 \RecordChanges
+\hypersetup{
+  colorlinks = true,
+  linkcolor = magenta,
+  urlcolor = magenta,
+  citecolor = magenta,
+}
 \DoNotIndex{
   \NeedsTeXFormat,
   \ProvidesExplPackage,
@@ -38,58 +47,236 @@
   \msg_error:nnn,
   \msg_fatal:nn,
   \msg_new:nnn,
-  \sys_if_engine_luatex:F
+  \sys_if_engine_luatex:F,
+  \BionicDocText,
+  \hologo,
+  \href,
+  \hypersetup
 }
 \begin{document}
-  \DocInput{\jobname.dtx}
+  \DocInput{bionicreading.dtx}
 \end{document}
-%</driver>
+%</driver-en>
+%<*driver-cn>
+\documentclass{l3doc}
+\usepackage[fontset=fandol]{ctex}
+\usepackage{xcolor}
+\usepackage{hologo}
+\usepackage{booktabs}
+\usepackage{setspace}
+\setstretch{1.25}
+\newcommand{\BionicDocText}[2]{#2}
+\EnableCrossrefs
+\RecordChanges
+\hypersetup{
+  colorlinks = true,
+  linkcolor = magenta,
+  urlcolor = magenta,
+  citecolor = magenta,
+}
+\DoNotIndex{
+  \NeedsTeXFormat,
+  \ProvidesExplPackage,
+  \RequirePackage,
+  \ExplSyntaxOn,
+  \ExplSyntaxOff,
+  \NewDocumentCommand,
+  \NewDocumentEnvironment,
+  \bfseries,
+  \directlua,
+  \font,
+  \fontid,
+  \par,
+  \setluatexattribute,
+  \unsetluatexattribute,
+  \newluatexattribute,
+  \bool_if:NTF,
+  \bool_new:N,
+  \cs_new_protected:Npn,
+  \group_begin:,
+  \group_end:,
+  \int_compare:nNnTF,
+  \int_new:N,
+  \int_set:Nn,
+  \int_use:N,
+  \keys_define:nn,
+  \keys_set:nn,
+  \msg_error:nnn,
+  \msg_fatal:nn,
+  \msg_new:nnn,
+  \sys_if_engine_luatex:F,
+  \BionicDocText,
+  \hologo,
+  \href,
+  \hypersetup
+}
+\begin{document}
+  \DocInput{bionicreading.dtx}
+\end{document}
+%</driver-cn>
 % \fi
 %
-% \title{The \pkg{bionicreading} package}
+% \newcommand{\BionicDocTitle}
+%   {\BionicDocText{The \pkg{bionicreading} package}{\pkg{bionicreading} 宏包}}
+% \newcommand{\BionicDocAbstract}
+%   {
+%     \BionicDocText
+%       {%
+%         \pkg{bionicreading} highlights the leading part of western ASCII words.
+%         It provides a small \hologo{LaTeX}3 interface backed by \hologo{LuaTeX} node processing.
+%         Both inline commands and paragraph environments mark their contents with a
+%         \hologo{LuaTeX} attribute; the Lua backend later converts marked western glyphs during
+%         paragraph processing.  CJK glyphs and mathematical material are not converted.
+%       }
+%       {%
+%         \pkg{bionicreading} 用于强调西文 ASCII 单词的前导部分。
+%         它提供了一组简洁的 \hologo{LaTeX}3 接口，并由 \hologo{LuaTeX} 的节点处理逻辑完成实际转换。
+%         行内命令和段落环境都会先给内容打上 \hologo{LuaTeX} attribute 标记，
+%         再由 Lua 后端在分段过程中转换对应的西文字形。
+%         CJK 字符和数学公式不会被改写。
+%       }
+%   }
+% \newcommand{\BionicDocOverviewTitle}{\BionicDocText{Overview}{概述}}
+% \newcommand{\BionicDocOverviewA}
+%   {
+%     \BionicDocText
+%       {%
+%         The package implements a bionic-reading-style visual treatment for western
+%         text.  For each ASCII word, a calculated prefix is switched to the bold
+%         version of the current font.  The calculation follows the fixation tables
+%         used by the \href{https://github.com/Gumball12/text-vide}{text-vide} project:
+%         higher \texttt{fixation-point} values
+%         generally produce shorter highlighted prefixes.
+%       }
+%       {%
+%         本宏包为西文文本实现了一种 bionic reading 风格的视觉强调效果。
+%         对每个 ASCII 单词，程序会计算一个前缀长度，并把这一段切换到当前字体的粗体版本。
+%         计算方式遵循 \href{https://github.com/Gumball12/text-vide}{text-vide} 项目使用的 fixation 表；
+%         一般来说，\texttt{fixation-point} 越大，被强调的前缀越短。
+%       }
+%   }
+% \newcommand{\BionicDocOverviewB}
+%   {
+%     \BionicDocText
+%       {%
+%         The package is intentionally scoped to western ASCII words.  It does not
+%         attempt to segment CJK text, and it does not modify math lists.  \hologo{LuaLaTeX} is
+%         required because all conversion is performed on the node list after macro
+%         expansion.
+%       }
+%       {%
+%         本宏包刻意只处理西文 ASCII 单词。
+%         它不会尝试对 CJK 文本进行分词，也不会修改数学列表。
+%         由于全部转换都是在宏展开之后对节点表完成的，因此必须使用 \hologo{LuaLaTeX}。
+%       }
+%   }
+% \newcommand{\BionicDocUiTitle}{\BionicDocText{User interface}{用户接口}}
+% \newcommand{\BionicDocSetupDesc}
+%   {\BionicDocText
+%      {Sets global package options.  The currently supported keys are
+%       \texttt{enabled} and \texttt{fixation-point}.}
+%      {设置宏包的全局选项。目前支持的键为
+%       \texttt{enabled} 和 \texttt{fixation-point}。}}
+% \newcommand{\BionicDocInlineDesc}
+%   {\BionicDocText
+%      {Marks inline or short text for bionic-reading conversion.  The command does
+%       not scan the argument as a \hologo{TeX} string.  It sets a \hologo{LuaTeX} attribute while the
+%       argument is typeset; the Lua backend later processes the marked glyph nodes.}
+%      {为行内文本或短文本打上 bionic reading 转换标记。
+%       该命令不会把参数当作 \hologo{TeX} 字符串重新扫描，而是在排版参数时设置 \hologo{LuaTeX} attribute，
+%       然后由 Lua 后端在后续阶段处理带标记的字形节点。}}
+% \newcommand{\BionicDocScopeDesc}
+%   {\BionicDocText
+%      {Enables and disables marking for an explicit scope.  The start command
+%       registers the current normal font and its bold counterpart as a font pair,
+%       then marks subsequently created glyphs with the current fixation point.}
+%      {在显式作用域内开启或关闭标记。
+%       起始命令会先把当前正文字体及其粗体对应项注册为一个字体对，
+%       然后使用当前的 fixation point 给后续生成的字形打标记。}}
+% \newcommand{\BionicDocParDesc}
+%   {\BionicDocText
+%      {A paragraph environment for bionic reading.  The environment uses the same
+%       \hologo{LuaTeX} attribute mechanism as \cs{bionic}, but it also terminates the
+%       current paragraph at the end of the environment.}
+%      {一个用于 bionic reading 的段落环境。
+%       它与 \cs{bionic} 使用同一套 \hologo{LuaTeX} attribute 机制，
+%       但会在环境结束时主动结束当前段落。}}
+% \newcommand{\BionicDocOptionsTitle}{\BionicDocText{Options}{选项}}
+% \newcommand{\BionicDocOptionsHead}
+%   {\BionicDocText{Key & Value & Meaning \\}{键 & 取值 & 含义 \\}}
+% \newcommand{\BionicDocEnabledRow}
+%   {\BionicDocText
+%      {\texttt{enabled} & boolean & Enables or disables conversion. \\}
+%      {\texttt{enabled} & boolean & 启用或关闭转换。 \\}}
+% \newcommand{\BionicDocFixationRow}
+%   {\BionicDocText
+%      {\texttt{fixation-point} & 1--5 & Selects the fixation table. \\}
+%      {\texttt{fixation-point} & 1--5 & 选择 fixation 表。 \\}}
+% \newcommand{\BionicDocExamplesTitle}{\BionicDocText{Examples}{示例}}
+% \newcommand{\BionicDocExamplesText}
+%   {\BionicDocText
+%      {Both interfaces use the same \hologo{LuaTeX} node backend.  Use \cs{bionic} for inline
+%       spans and \texttt{bionicpar} for paragraph blocks.}
+%      {两种接口共享同一个 \hologo{LuaTeX} 节点后端。
+%       \cs{bionic} 适用于行内片段，\texttt{bionicpar} 适用于段落块。}}
+% \newcommand{\BionicDocBackendTitle}{\BionicDocText{\hologo{LuaTeX} backend}{\hologo{LuaTeX} 后端}}
+% \newcommand{\BionicDocBackendA}
+%   {\BionicDocText
+%      {The Lua backend scans paragraph node lists in \texttt{pre_linebreak_filter}.
+%       Only glyphs carrying the package attribute are converted.  ASCII letters and
+%       digits are accumulated as one word.  CJK glyphs, spaces, punctuation, math
+%       nodes, and other non-word nodes terminate the current word.  Kerning nodes
+%       and discretionary hyphenation nodes are not word boundaries: \hologo{TeX} can insert
+%       them inside western words, and treating them as boundaries would restart
+%       prefix highlighting in the middle of a word.}
+%      {Lua 后端会在 \texttt{pre_linebreak_filter} 中扫描段落节点表。
+%       只有携带本宏包 attribute 的字形才会被转换。ASCII 字母和数字会被累积为一个单词；
+%       CJK 字形、空格、标点、数学节点以及其他非单词节点都会终止当前单词。
+%       kerning 节点和 discretionary 连字符节点不被视为单词边界，
+%       因为 \hologo{TeX} 可能在西文单词内部插入它们；如果把它们当作边界，
+%       就会导致单词中途重新开始计算强调前缀。}}
+% \newcommand{\BionicDocBackendB}
+%   {\BionicDocText
+%      {The backend changes only glyph font IDs.  It does not insert new nodes and
+%       does not alter the textual content.  This keeps macro expansion, CJK text,
+%       and math material under \hologo{TeX}'s normal control.}
+%      {后端只会修改字形节点的字体 ID。
+%       它不会插入新节点，也不会改变文本内容本身，
+%       因而宏展开、CJK 文本和数学材料仍然由 \hologo{TeX} 正常控制。}}
+% \newcommand{\BionicDocImplTitle}{\BionicDocText{Implementation}{实现}}
+% \newcommand{\BionicDocPkgTitle}{\BionicDocText{Package file}{宏包文件}}
+% \newcommand{\BionicDocLuaTitle}{\BionicDocText{Lua backend}{Lua 后端}}
+%
+% \title{\BionicDocTitle}
 % \author{Explorer}
 % \date{2026-04-27}
 %
 % \maketitle
 %
 % \begin{abstract}
-% \pkg{bionicreading} highlights the leading part of western ASCII words.
-% It provides a small \LaTeX3 interface backed by LuaTeX node processing.
-% Both inline commands and paragraph environments mark their contents with a
-% LuaTeX attribute; the Lua backend later converts marked western glyphs during
-% paragraph processing.  CJK glyphs and mathematical material are not converted.
+% \BionicDocAbstract
 % \end{abstract}
 %
-% \section{Overview}
+% \section{\BionicDocOverviewTitle}
 %
-% The package implements a bionic-reading-style visual treatment for western
-% text.  For each ASCII word, a calculated prefix is switched to the bold
-% version of the current font.  The calculation follows the fixation tables
-% used by the text-vide project: higher \texttt{fixation-point} values
-% generally produce shorter highlighted prefixes.
+% \BionicDocOverviewA
 %
-% The package is intentionally scoped to western ASCII words.  It does not
-% attempt to segment CJK text, and it does not modify math lists.  LuaLaTeX is
-% required because all conversion is performed on the node list after macro
-% expansion.
+% \BionicDocOverviewB
 %
-% \section{User interface}
+% \section{\BionicDocUiTitle}
 %
 % \begin{function}{\bionicsetup}
 %   \begin{syntax}
 %     \cs{bionicsetup}\marg{options}
 %   \end{syntax}
-%   Sets global package options.  The currently supported keys are
-%   \texttt{enabled} and \texttt{fixation-point}.
+%   \BionicDocSetupDesc
 % \end{function}
 %
 % \begin{function}{\bionic}
 %   \begin{syntax}
 %     \cs{bionic}\oarg{options}\marg{text}
 %   \end{syntax}
-%   Marks inline or short text for bionic-reading conversion.  The command does
-%   not scan the argument as a TeX string.  It sets a LuaTeX attribute while the
-%   argument is typeset; the Lua backend later processes the marked glyph nodes.
+%   \BionicDocInlineDesc
 % \end{function}
 %
 % \begin{function}{\bionicstart,\bionicstop}
@@ -98,9 +285,7 @@
 %     \meta{text}
 %     \cs{bionicstop}
 %   \end{syntax}
-%   Enables and disables marking for an explicit scope.  The start command
-%   registers the current normal font and its bold counterpart as a font pair,
-%   then marks subsequently created glyphs with the current fixation point.
+%   \BionicDocScopeDesc
 % \end{function}
 %
 % \begin{function}{bionicpar}
@@ -109,25 +294,23 @@
 %       \meta{paragraphs}
 %     \texttt{\string\end\{bionicpar\}}
 %   \end{syntax}
-%   A paragraph environment for bionic reading.  The environment uses the same
-%   LuaTeX attribute mechanism as \cs{bionic}, but it also terminates the
-%   current paragraph at the end of the environment.
+%   \BionicDocParDesc
 % \end{function}
 %
-% \section{Options}
+% \section{\BionicDocOptionsTitle}
 %
 % \begin{center}
 % \begin{tabular}{lll}
 % \toprule
-% Key & Value & Meaning \\
+% \BionicDocOptionsHead
 % \midrule
-% \texttt{enabled} & boolean & Enables or disables conversion. \\
-% \texttt{fixation-point} & 1--5 & Selects the fixation table. \\
+% \BionicDocEnabledRow
+% \BionicDocFixationRow
 % \bottomrule
 % \end{tabular}
 % \end{center}
 %
-% \section{Examples}
+% \section{\BionicDocExamplesTitle}
 %
 % \begin{verbatim}
 % \usepackage{bionicreading}
@@ -140,28 +323,19 @@
 % \end{bionicpar}
 % \end{verbatim}
 %
-% Both interfaces use the same LuaTeX node backend.  Use \cs{bionic} for inline
-% spans and \texttt{bionicpar} for paragraph blocks.
+% \BionicDocExamplesText
 %
-% \section{LuaTeX backend}
+% \section{\BionicDocBackendTitle}
 %
-% The Lua backend scans paragraph node lists in \texttt{pre_linebreak_filter}.
-% Only glyphs carrying the package attribute are converted.  ASCII letters and
-% digits are accumulated as one word.  CJK glyphs, spaces, punctuation, math
-% nodes, and other non-word nodes terminate the current word.  Kerning nodes
-% and discretionary hyphenation nodes are not word boundaries: TeX can insert
-% them inside western words, and treating them as boundaries would restart
-% prefix highlighting in the middle of a word.
+% \BionicDocBackendA
 %
-% The backend changes only glyph font IDs.  It does not insert new nodes and
-% does not alter the textual content.  This keeps macro expansion, CJK text,
-% and math material under TeX's normal control.
+% \BionicDocBackendB
 %
 % \StopEventually{\PrintChanges\PrintIndex}
 %
-% \section{Implementation}
+% \section{\BionicDocImplTitle}
 %
-% \subsection{Package file}
+% \subsection{\BionicDocPkgTitle}
 %
 %    \begin{macrocode}
 %<*package>
@@ -283,7 +457,7 @@
 %</package>
 %    \end{macrocode}
 %
-% \subsection{Lua backend}
+% \subsection{\BionicDocLuaTitle}
 %
 %    \begin{macrocode}
 %<*lua>
